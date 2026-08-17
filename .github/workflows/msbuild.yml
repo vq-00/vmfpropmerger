@@ -3,6 +3,7 @@ name: Build Windows
 on:
   push:
     branches:
+      - main
       - master
   pull_request:
 
@@ -14,33 +15,63 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup MinGW
-        uses: egor-tensin/setup-mingw@v2
-        with:
-          platform: x64
-
-      - name: Configure CMake
-        shell: bash
+      - name: Check MinGW
+        shell: pwsh
         run: |
-          cmake -S . -B build \
-            -G "MinGW Makefiles" \
+          $gcc = Get-Command gcc -ErrorAction SilentlyContinue
+          $gxx = Get-Command g++ -ErrorAction SilentlyContinue
+          $cmake = Get-Command cmake -ErrorAction SilentlyContinue
+
+          if (-not $gcc) {
+            Write-Error "gcc was not found"
+            exit 1
+          }
+
+          if (-not $gxx) {
+            Write-Error "g++ was not found"
+            exit 1
+          }
+
+          if (-not $cmake) {
+            Write-Error "cmake was not found"
+            exit 1
+          }
+
+          Write-Host "GCC:"
+          gcc --version
+
+          Write-Host "G++:"
+          g++ --version
+
+          Write-Host "CMake:"
+          cmake --version
+
+      - name: Configure
+        shell: pwsh
+        run: |
+          cmake `
+            -S . `
+            -B build `
+            -G "MinGW Makefiles" `
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        shell: bash
+        shell: pwsh
         run: |
           cmake --build build --config Release --parallel
 
       - name: Verify executable
         shell: pwsh
         run: |
-          if (-not (Test-Path "build/vmfpropmerger.exe")) {
-            Write-Error "build/vmfpropmerger.exe was not produced"
+          $exe = "build/vmfpropmerger.exe"
+
+          if (-not (Test-Path $exe)) {
+            Write-Error "$exe was not produced"
             exit 1
           }
 
           Write-Host "Build successful:"
-          Get-Item "build/vmfpropmerger.exe"
+          Get-Item $exe
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
