@@ -1,24 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Allow user to specify compiler locations via environment variables
-if(DEFINED ENV{GCC_PATH})
-    set(CMAKE_C_COMPILER "$ENV{GCC_PATH}/bin/gcc")
-    set(CMAKE_CXX_COMPILER "$ENV{GCC_PATH}/bin/g++")
-endif()
-if(DEFINED ENV{MINGW_PATH})
-    set(CMAKE_C_COMPILER "$ENV{MINGW_PATH}/bin/gcc.exe")
-    set(CMAKE_CXX_COMPILER "$ENV{MINGW_PATH}/bin/g++.exe")
-endif()
-
 project(vmfpropmerger)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Include directories
-include_directories(include)
-
-# Source files (all .cpp files in src/)
 set(SOURCES
     src/main.cpp
     src/utils.cpp
@@ -29,22 +15,25 @@ set(SOURCES
     src/transform.cpp
 )
 
-# Create executable
 add_executable(vmfpropmerger ${SOURCES})
 
-# Platform-specific configurations
+target_include_directories(vmfpropmerger PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
 if(WIN32)
-    target_compile_definitions(vmfpropmerger PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
+    target_compile_definitions(vmfpropmerger PRIVATE
+        _CRT_SECURE_NO_WARNINGS
+        NOMINMAX
+    )
 else()
     target_link_libraries(vmfpropmerger stdc++fs)
 endif()
 
-# Release build optimizations
 if(MSVC)
     target_compile_options(vmfpropmerger PRIVATE /O2)
 else()
     target_compile_options(vmfpropmerger PRIVATE -O2)
 endif()
 
-# Install target
 install(TARGETS vmfpropmerger DESTINATION bin)
