@@ -1,0 +1,45 @@
+# Build directories
+build/
+cmake-build-debug/
+cmake-build-release/
+.vscode/
+.idea/
+
+# Compiled binaries
+*.exe
+*.out
+*.o
+*.a
+*.so
+*.dylib
+vmfpropmerger
+
+# Dependency files
+*.d
+*.depend
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+
+# IDE files
+*.vcxproj
+*.vcxproj.filters
+*.sln
+.DS_Store
+.vscode/settings.json
+
+# Temporary/backup files
+*.swp
+*.swo
+*~
+.#*
+*.tmp
+
+# OS files
+Thumbs.db
+.DS_Store
+*.bak
