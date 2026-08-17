@@ -1,3 +1,4 @@
+Need this tool in the same directory as .exe for model decompilation: https://github.com/UltraTechX/Crowbar-Command-Line
 ```
 ====================================================
  Reactive Drop VMF Prop Merger
