@@ -14,6 +14,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Show project structure
+        shell: pwsh
+        run: |
+          Write-Host "Repository:"
+          Get-ChildItem -Recurse -File | ForEach-Object {
+            $_.FullName.Replace("$PWD\", "")
+          }
+      
+          Write-Host ""
+          Write-Host "Include directory:"
+          if (Test-Path "include") {
+            Get-ChildItem include -Recurse -File
+          } else {
+            Write-Error "include directory does not exist"
+          }
 
       - name: Check MinGW
         shell: pwsh
