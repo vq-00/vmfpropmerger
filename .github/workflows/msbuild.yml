@@ -1,0 +1,49 @@
+name: Build Windows
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MinGW
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+
+      - name: Configure CMake
+        shell: bash
+        run: |
+          cmake -S . -B build \
+            -G "MinGW Makefiles" \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build build --config Release --parallel
+
+      - name: Verify executable
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "build/vmfpropmerger.exe")) {
+            Write-Error "build/vmfpropmerger.exe was not produced"
+            exit 1
+          }
+
+          Write-Host "Build successful:"
+          Get-Item "build/vmfpropmerger.exe"
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: vmfpropmerger-windows-x64
+          path: build/vmfpropmerger.exe
