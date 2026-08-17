@@ -5,7 +5,12 @@ on:
     branches:
       - main
       - master
+    tags:
+      - "v*"
   pull_request:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -14,21 +19,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Show project structure
-        shell: pwsh
-        run: |
-          Write-Host "Repository:"
-          Get-ChildItem -Recurse -File | ForEach-Object {
-            $_.FullName.Replace("$PWD\", "")
-          }
-      
-          Write-Host ""
-          Write-Host "Include directory:"
-          if (Test-Path "include") {
-            Get-ChildItem include -Recurse -File
-          } else {
-            Write-Error "include directory does not exist"
-          }
 
       - name: Check MinGW
         shell: pwsh
@@ -52,13 +42,8 @@ jobs:
             exit 1
           }
 
-          Write-Host "GCC:"
           gcc --version
-
-          Write-Host "G++:"
           g++ --version
-
-          Write-Host "CMake:"
           cmake --version
 
       - name: Configure
@@ -88,8 +73,17 @@ jobs:
           Write-Host "Build successful:"
           Get-Item $exe
 
-      - name: Upload executable
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: vmfpropmerger-windows-x64
           path: build/vmfpropmerger.exe
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/vmfpropmerger.exe
+          generate_release_notes: true
+          draft: false
+          prerelease: false
