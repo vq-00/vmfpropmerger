@@ -12,7 +12,6 @@ cmake-build-release/
 *.a
 *.so
 *.dylib
-vmfpropmerger
 
 # Dependency files
 *.d
