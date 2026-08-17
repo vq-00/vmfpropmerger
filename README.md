@@ -1,3 +1,4 @@
+```
 ====================================================
  Reactive Drop VMF Prop Merger
 ====================================================
@@ -63,3 +64,4 @@ Examples:
  --exclude-model "models/characters/*" \
  --max-triangles 10000 \
  --keep-work
+```
