@@ -1,4 +1,6 @@
 Need this tool in the same directory as .exe for model decompilation: https://github.com/UltraTechX/Crowbar-Command-Line
+
+If u want to build GUI u need to install Qt 6 and modify build_gui.bat
 ```
 ====================================================
  Reactive Drop VMF Prop Merger
